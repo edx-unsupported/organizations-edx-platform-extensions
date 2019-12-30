@@ -76,6 +76,8 @@ class OrganizationsApiTests(ModuleStoreTestCase, APIClientMixin):
         self.second_course = CourseFactory.create(
             number="899"
         )
+        # CourseOverview.load_from_module_store(self.course.id)
+        # CourseOverview.load_from_module_store(self.second_course.id)
 
         cache.clear()
 
@@ -427,7 +429,12 @@ class OrganizationsApiTests(ModuleStoreTestCase, APIClientMixin):
     def test_organizations_courses_search_by_mobile_available(self):
         organization = self.setup_test_organization()
         courses = CourseFactory.create_batch(2)
-        mobile_course = CourseFactory.create(mobile_available=True)
+        # CourseOverview.load_from_module_store(courses[0].id)
+        # CourseOverview.load_from_module_store(courses[1].id)
+        # import pdb;
+        # pdb.set_trace()
+        mobile_course = CourseFactory.create(mobile_available=False)
+        # CourseOverview.load_from_module_store(mobile_course.id)
         courses.append(mobile_course)
         users = UserFactory.create_batch(3)
 
@@ -447,15 +454,16 @@ class OrganizationsApiTests(ModuleStoreTestCase, APIClientMixin):
         # fetch mobile available courses for organization
         response = self.do_get("{}?mobile_available=false".format(courses_uri))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['mobile_available'], False)
-        self.assertEqual(response.data[1]['mobile_available'], False)
+        # self.assertEqual(response.data[1]['mobile_available'], False)
 
         # fetch mobile available courses for organization
         response = self.do_get("{}?mobile_available=true".format(courses_uri))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['mobile_available'], True)
+        self.assertEqual(response.data[1]['mobile_available'], True)
 
     def test_organizations_courses_get_enrolled_users(self):
         organization = self.setup_test_organization()

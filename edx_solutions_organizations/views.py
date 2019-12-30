@@ -269,13 +269,13 @@ class OrganizationsViewSet(SecurePaginatedModelViewSet):
             .values_list('course_id', 'user_id')
 
         enrollments = {}
-        course_ids = []
+        course_keys = []
         for (course_id, user_id) in enrollment_qs:
             enrollments.setdefault(course_id, []).append(user_id)
             if course_id not in course_ids:
                 course_ids.append(course_id)
 
-        course_keys = map(get_course_key, filter(None, course_ids))
+        #course_keys = map(get_course_key, filter(None, course_ids))
         if request.query_params.get('mobile_available'):
             mobile_available = str2bool(request.query_params.get('mobile_available'))
             courses = CourseOverview.objects.filter(id__in=course_keys, mobile_available=mobile_available)
